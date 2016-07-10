@@ -52,8 +52,8 @@ class Player():
             "svd_bullets" : {"item_id" : 400048, "idx" : 8 },   #
             "wooden_shield": { "item_id": 101317, "idx": 8  },
             "steel_shield": { "item_id": 101318, "idx": 8 },
-            "grenade" : {"item_id":101310, "idx":8 }
-            # "m107": {"item_id": 227063, "idx": 4 }
+            "grenade" : {"item_id": 101310, "idx":8 },
+            "ak_bullets": {"item_id" : 400100, "idx": 8}
         }
         return item_dict[ name ]
 

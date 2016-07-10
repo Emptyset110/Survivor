@@ -147,27 +147,32 @@ headers_mysterybox = {
 学习技能
 """
 
+"""
+创建战队
+"""
+url = "http://103.41.55.244/api/api_ClanCreate.aspx"
 
-# res = s.post(url, data=data, headers = headers)
-# res = s.post(url = url_mysterybox, data = data_mysterybox, headers = headers_mysterybox)
-# res = s.post( url_gp_convert, data = data_gp_convert, headers = headers_gp_convert )
-pwd_headers = {
-    "Accept"    : "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Encoding":"gzip, deflate",
-    # "Accept-Language":"zh-CN,zh;q=0.8",
-    "Cache-Control":"max-age=0",
-    "Content-Length":"85",
-    "Content-Type":"application/x-www-form-urlencoded",
-    "Cookie":"PHPSESSID=8u414sfvls08m6adjiggpfkk06",
-    "Host":"www.infestationmmo.com.cn",
-    "Origin":"http://www.infestationmmo.com.cn",
-    "Proxy-Connection":"keep-alive",
-    "Referer":"http://www.infestationmmo.com.cn/password_edit.php",
-    "Upgrade-Insecure-Requests":"1",
-    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36"
+headers = {
+    "Content-Type": "application/x-www-form-urlencoded;",
+    "charset": "utf-8",
+    "Host"  : "103.41.55.244",
 }
-res = s.post( url = "http://www.infestationmmo.com.cn/password_edit.php", data = { "act" : "save", "password" : "emptyset110", "new_password": "emptyset110.", "confirm_password":"emptyset110." }, headers = pwd_headers )
-print( type(res.text) )
-s = res.text
-# s.decode('gbk','ignore')
-print( s )
+
+data = {
+    "s_id" : 1231,
+    "s_key" : -1505429903,
+    "CharId" : 12098,
+    "func"  : "create",
+    "ClanName" : "    蒙娜丽莎的微笑",
+    "ClanNameColor": 1,
+    "ClanTag": "德·芙",
+    "ClanTagColor": 1,
+    "ClanEmblemId" : 0,
+    "ClanEmblemColor": 0
+}
+res = s.post( url, data = data, headers = headers )
+
+timestamp = 1468087193
+
+print(res.text)
+# res = s.post(url, data=data, headers = headers)
