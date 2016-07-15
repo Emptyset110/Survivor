@@ -53,7 +53,7 @@ class Player():
             "wooden_shield": { "item_id": 101317, "idx": 8  },
             "steel_shield": { "item_id": 101318, "idx": 8 },
             "grenade" : {"item_id": 101310, "idx":8 },
-            "ak_bullets": {"item_id" : 400100, "idx": 8}
+            "ak_100": {"item_id" : 400100, "idx": 8}
         }
         return item_dict[ name ]
 
@@ -192,7 +192,18 @@ class Player():
             print( "即将注册:\t{}:\t{}".format( username, accounts[username] ) )
             res = self.register( username = username, password = accounts[username] )
             self.login( username = username, password = accounts[username] )
-            print("")
+
+    # def init_all( self, accounts = "accounts.json" ):
+    #     import json
+    #     import os
+    #     import time
+    #     f = open( os.getcwd() + "/" + accounts, 'r' , encoding="utf-8" )
+    #     accounts = json.load( f )
+    #     f.close()
+    #     for username in accounts.keys():
+    #         res = self.login( username = username, password = accounts[username] )
+    #         print(res)
+    #         self.buy( "" )
 
     def change_pwd(self, pwd = None):
         if pwd is None:
@@ -220,7 +231,62 @@ class Player():
         res = self.session.post( url, proxies = self.proxies, data = data, headers = headers )
         print( res.text )
 
-    def improve_all(self, accounts = "accounts.json"):
+    def improve_one(self, username,password = None, accounts = "accounts.json", dx = True, steel_shield = True, nato_30 = True, nato_100 = False, gc_500 = False, ak_100 = True, grenade = True, dollars = True):
+        import json
+        import os
+        import time
+        import random
+        if password is None:
+            f = open( os.getcwd() + "/" + accounts, 'r' , encoding="utf-8" )
+            accounts = json.load( f )
+            f.close()
+            password = accounts[username]
+        res = self.login( username = username, password = password )
+        if res == True:
+            if dollars:
+                rand = int(random.random()*1000+100)
+                self.buy( "steel_shield", rand*(-1) )
+                print( "{} -> 增加美金:{}".format(username, 10000*rand ) )
+            if steel_shield:
+                rand = int(random.random()*500+100)
+                self.buy( "steel_shield", rand*(-1) )
+                for i in range( 0, int(rand/20) ):
+                    self.buy( "steel_shield", 20 )
+                    print( "{} -> 购买100钢盾".format( username ) )
+            if nato_30:
+                rand = int(random.random()*1000+100)
+                self.buy( "nato_30", rand*(-1) )
+                for i in range( 0, int(rand/20) ):
+                    self.buy( "nato_30", 20 )
+                    print( "{} -> 购买20个北约30".format( username ) )
+            if ak_100:
+                rand = int(random.random()*50+100)
+                self.buy( "ak_100", rand*(-1) )
+                for i in range( 0, int(rand/20) ):
+                    self.buy( "ak_100", 20 )
+                    print( "{} -> 购买20个ak弹鼓".format( username ) )
+            if grenade:
+                rand = int(random.random()*100+100)
+                self.buy( "grenade", rand*(-1) )
+                for i in range( 0, int(rand/20) ):
+                    self.buy( "grenade", 20 )
+                    print( "{} -> 购买20个手榴弹".format( username ) )
+            if nato_100:
+                rand = int(random.random()*500+100)
+                self.buy( "nato_100", rand*(-1) )
+                for i in range( 0, int(rand/20) ):
+                    self.buy( "nato_100", 20 )
+                    print( "{} -> 购买20个北约100".format( username ) )
+            if gc_500:
+                rand = int(random.random()*100+100)
+                self.buy( "gc_500", rand*(-1) )
+                for i in range( 0, int(rand/20) ):
+                    self.buy( "gc_500", 20 )
+                    print( "{} -> 购买20个500gc".format( username ) )
+        else:
+            print( "{}: 登录失败", username )
+
+    def improve_all(self, accounts = "accounts.json", dx = True, steel_shield = True, nato_30 = True, nato_100 = False, gc_500 = False, ak_100 = True, grenade = True, dollars = True):
         import json
         import os
         import time
@@ -229,9 +295,4 @@ class Player():
         accounts = json.load( f )
         f.close()
         for username in accounts.keys():
-            res = self.login( username = username, password = accounts[username] )
-            if res == True:
-                self.buy( "gc_500", int(random.random()*1000+100)*(-1) )
-                self.buy( "steel_shield", int(random.random()*1000+100)*(-1) )
-            else:
-                print( "{}: 登录失败", username )
+            self.improve_one( username = username, password = accounts[username], dx = True, steel_shield = True, nato_30 = True, nato_100 = False, gc_500 = False, ak_100 = False, grenade = False, dollars = True )
