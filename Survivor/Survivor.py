@@ -1,14 +1,15 @@
 import requests
 
 class Player():
-    def __init__( self, ip = "103.41.55.244", username = None, password = None ):
+    def __init__( self, ip = "103.41.55.244", username = None, password = None, proxies = None ):
         self.ip = ip
         self.base_url = "http://" + self.ip
         self.session = requests.Session()
         self.is_login = False
+        self.proxies = proxies
 
     def get_proxy(self):
-        return { "http": "127.0.0.1:8087" }
+        return self.proxies
 
     def random_mac(self):
         """
@@ -31,7 +32,6 @@ class Player():
                 "Content-Type": "application/x-www-form-urlencoded;",
                 "charset": "utf-8",
                 "Host"  : self.ip,
-                # "Content-Length" : content_length
             }
         else:
             return {
@@ -134,7 +134,7 @@ class Player():
             "password"  : password,
             "mac"       : mac_addr
         }
-        res = self.session.post( url, proxies = self.get_proxy() ,data = data, headers = self.get_headers( 74 ) )
+        res = self.session.post( url, proxies = self.get_proxy() ,data = data, headers = self.get_headers() )
         if res.status_code == 200:
             print( "登陆返回信息：{}".format(res.text) )
             result = res.text.split(' ')
@@ -144,6 +144,8 @@ class Player():
                 if result[2] == '100':
                     self.is_login = True
                     print( "登陆成功" )
+                    self.username = username
+                    self.password = password
                     return True
                 else:
                     print( "登录失败" )
@@ -151,6 +153,25 @@ class Player():
             else:
                 print( "登陆失败，无法识别的返回信息" )
                 return False
+        else:
+            print( res.status_code )
+
+    def auto_login(self, username):
+        # 自动登录accounts.json中的帐号
+        import json
+        import os
+        f = open( os.getcwd() + "/" + accounts, 'r' , encoding="utf-8" )
+        accounts = json.load( f )
+        f.close()
+        if username in accounts.keys():
+            password = accounts[ "username" ]
+            self.is_login = self.login( username = username, password = password )
+            if self.is_login == False:
+                self.is_login = self.login( username = username, password = username )
+            if self.is_login == False:
+                print( "{}: 该帐号密码错误，请更新accounts.json".format( username ) )
+        else:
+            print( "找不到该帐号" )
 
     def disguise_all(self, accounts = "accounts.json"):
         import json
@@ -172,3 +193,45 @@ class Player():
             res = self.register( username = username, password = accounts[username] )
             self.login( username = username, password = accounts[username] )
             print("")
+
+    def change_pwd(self, pwd = None):
+        if pwd is None:
+            pwd = self.username
+        headers = {
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+            "Accept-Encoding":"gzip, deflate",
+            "Accept-Language":"en-US,en;q=0.8",
+            "Cache-Control":"max-age=0",
+            "Connection":"keep-alive",
+            "Content-Length":76,
+            "Content-Type":"application/x-www-form-urlencoded",
+            "Host":"www.infestationmmo.com.cn",
+            "Origin":"http://www.infestationmmo.com.cn",
+            "Upgrade-Insecure-Requests":1,
+            "User-Agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36"
+        }
+        url = "http://www.infestationmmo.com.cn/forgot_password.php"
+        data = {
+            "act":"save",
+            "CustomerID": self.id,
+            "password": pwd,
+            "confirm_password": pwd
+        }
+        res = self.session.post( url, proxies = self.proxies, data = data, headers = headers )
+        print( res.text )
+
+    def improve_all(self, accounts = "accounts.json"):
+        import json
+        import os
+        import time
+        import random
+        f = open( os.getcwd() + "/" + accounts, 'r' , encoding="utf-8" )
+        accounts = json.load( f )
+        f.close()
+        for username in accounts.keys():
+            res = self.login( username = username, password = accounts[username] )
+            if res == True:
+                self.buy( "gc_500", int(random.random()*1000+100)*(-1) )
+                self.buy( "steel_shield", int(random.random()*1000+100)*(-1) )
+            else:
+                print( "{}: 登录失败", username )

